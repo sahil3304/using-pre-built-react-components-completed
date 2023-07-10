@@ -8,35 +8,51 @@ function CreateArea(props) {
 
   const [product, setProduct] = useState({
     name: "",
-    price: ""
+    price: "",
+    outlet: "",
+    Veg: ""
   });
 
   function handleChange(event) {
     const { name, value } = event.target;
-
+  
     if (name === "price" && !isNaN(value)) {
       // Only update the price if the value is a valid number
-      setProduct(prevProduct => {
-        return {
-          ...prevProduct,
-          [name]: value
-        };
-      });
-    } else {
       setProduct(prevProduct => {
         return {
           ...prevProduct,
           [name]: value.replace(/[^0-9]/g, "") // Remove non-numeric characters
         };
       });
+    } else if (name === "name" || name === "outlet") {
+      // Only update the name and outlet if the value is valid
+      setProduct(prevProduct => {
+        return {
+          ...prevProduct,
+          [name]: value
+        };
+      });
+    } else if (name === "Veg") {
+      // Only update the Veg if the value is either "true" or "false"
+       {
+        setProduct(prevProduct => {
+          return {
+            ...prevProduct,
+            [name]: value
+          };
+        });
+      }
     }
   }
+  
 
   function submitProduct(event) {
     props.onAdd(product);
     setProduct({
       name: "",
-      price: ""
+      price: "",
+      outlet: "",
+      Veg: ""
     });
     event.preventDefault();
   }
@@ -49,12 +65,26 @@ function CreateArea(props) {
     <div>
       <form className="create-note">
         {isExpanded && (
-          <input
-            name="name"
-            onChange={handleChange}
-            value={product.name}
-            placeholder="Product Name"
-          />
+          <div>
+            <input
+              name="name"
+              onChange={handleChange}
+              value={product.name}
+              placeholder="Product Name"
+            />
+            <input
+              name="outlet"
+              onChange={handleChange}
+              value={product.outlet}
+              placeholder="Outlet Name"
+            />
+            <input
+              name="Veg"
+              onChange={handleChange}
+              value={product.Veg}
+              placeholder="Veg/Non-Veg (true/false)"
+            />
+          </div>
         )}
 
         <input
@@ -75,4 +105,3 @@ function CreateArea(props) {
 }
 
 export default CreateArea;
-  
