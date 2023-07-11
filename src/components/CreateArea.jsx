@@ -1,21 +1,22 @@
 import React, { useState } from "react";
 import AddIcon from "@material-ui/icons/Add";
+import DeleteIcon from "@material-ui/icons/Delete";
 import Fab from "@material-ui/core/Fab";
 import Zoom from "@material-ui/core/Zoom";
 
 function CreateArea(props) {
   const [isExpanded, setExpanded] = useState(false);
-
   const [product, setProduct] = useState({
     name: "",
     price: "",
     outlet: "",
     Veg: ""
   });
+  const [submittedProducts, setSubmittedProducts] = useState([]);
 
   function handleChange(event) {
     const { name, value } = event.target;
-  
+
     if (name === "price" && !isNaN(value)) {
       // Only update the price if the value is a valid number
       setProduct(prevProduct => {
@@ -34,31 +35,45 @@ function CreateArea(props) {
       });
     } else if (name === "Veg") {
       // Only update the Veg if the value is either "true" or "false"
-       {
-        setProduct(prevProduct => {
-          return {
-            ...prevProduct,
-            [name]: value
-          };
-        });
-      }
+      setProduct(prevProduct => {
+        return {
+          ...prevProduct,
+          [name]: value
+        };
+      });
     }
   }
-  
 
   function submitProduct(event) {
-    props.onAdd(product);
+    const newProduct = {
+      name: product.name,
+      price: product.price,
+      outlet: product.outlet,
+      Veg: product.Veg
+    };
+
+    setSubmittedProducts(prevProducts => [...prevProducts, newProduct]);
+
     setProduct({
       name: "",
       price: "",
       outlet: "",
       Veg: ""
     });
+
     event.preventDefault();
   }
 
   function expand() {
     setExpanded(true);
+  }
+
+  function handleDeleteProduct(index) {
+    setSubmittedProducts(prevProducts => {
+      const updatedProducts = [...prevProducts];
+      updatedProducts.splice(index, 1);
+      return updatedProducts;
+    });
   }
 
   return (
@@ -100,6 +115,21 @@ function CreateArea(props) {
           </Fab>
         </Zoom>
       </form>
+
+      <div className="card-container">
+        {submittedProducts.map((product, index) => (
+          <div key={index} className="card">
+            <h3>Product Name: {product.name}</h3>
+            <p>Price: {product.price}</p>
+            <p>Outlet Name: {product.outlet}</p>
+            <p>Veg/Non-Veg: {product.Veg}</p>
+            <DeleteIcon
+              className="delete-icon"
+              onClick={() => handleDeleteProduct(index)}
+            />
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
